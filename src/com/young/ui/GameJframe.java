@@ -9,7 +9,12 @@ import java.util.Random;
 public class GameJframe extends JFrame implements KeyListener {//继承java界面类，实现键盘监听接口
     int[][] data = new int[4][4];//记录各张图片的路径
     int x, y;//记录空白方块的位置坐标
-
+    String path = "image/girl/girl3/";//记录当前图片的路径，方便后面随机图片
+    int[][] win = new int[][]{
+            {0, 1, 2, 3},
+            {4, 5, 6, 7,},
+            {8, 9, 10, 11},
+            {12, 13, 14, 15}};
 
     //jframe表示窗口，游戏窗口很明显是他的子类所以继承jframe
     //实现各种与游戏窗口相关的逻辑
@@ -102,12 +107,18 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
     private void addimage() {
         this.getContentPane().removeAll();//加载前先清空，不然图片不会加载，移动拼图也不会生效
 
+        //判断胜利
+        if(judgewin()){
+        ImageIcon win = new ImageIcon("image/win.png");
+        JLabel j_win = new JLabel(win);
+        j_win.setBounds(203,283,197,73);
+        this.getContentPane().add(j_win);}
         //一共添加四行
         for (int i = 0; i < 4; i++) {
 //            添加一行图片
             for (int j = 0; j < 4; j++) {
                 int num = data[i][j];//指定分割后的图片序号
-                ImageIcon imageIcon = new ImageIcon("image/girl/girl1/" + num + ".jpg");
+                ImageIcon imageIcon = new ImageIcon(path + num + ".jpg");
                 JLabel jLabel = new JLabel(imageIcon);
 //                指定jlabel组件的位置和大小（0，0）表示隐藏容器的左上角位置
                 //美化：添加偏移量
@@ -138,57 +149,105 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
 
     @Override
     public void keyPressed(KeyEvent e) {
+        int code = e.getKeyCode();
+        if (code == 65) //表示A键
+        {
+
+            this.getContentPane().removeAll();
+            ImageIcon imageIcon = new ImageIcon(path + "all.jpg");
+            JLabel j_all = new JLabel(imageIcon);
+            j_all.setBounds(83, 134, 420, 420);
+            this.getContentPane().add(j_all);
+//添加背景图片同时为背景图片添加边框
+            ImageIcon background = new ImageIcon("image/background.png");
+            JLabel Jbackground = new JLabel(background);
+            Jbackground.setBounds(40, 40, 508, 560);
+            this.getContentPane().add(Jbackground);
+            this.getContentPane().repaint();
+
+        } else if (code == 87) {
+//            重置data中的值，然后重新加载
+            data = new int[][]{
+                    {0, 1, 2, 3},
+                    {4, 5, 6, 7,},
+                    {8, 9, 10, 11},
+                    {12, 13, 14, 15}
+            };
+            addimage();//addimgae中已经加入了判断胜利的渲染，所以这里直接调用即可
+
+        }
 
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        int code = e.getKeyCode();
-        if (code==37)//←对应的数值  当code==37是表示输入的←  同时表示将空位  右方  的图片移动上来
+        if(judgewin())//胜利之后就不能移动了直接返回
         {
-            if (y==3)
-            {
+            return;
+        }
+        int code = e.getKeyCode();
+
+        if (code == 37)//←对应的数值  当code==37是表示输入的←  同时表示将空位  右方  的图片移动上来
+        {
+            if (y == 3) {
                 return;//当空白块在最右边时，没法向左移动其他方块
             }
-            data[x][y]=data[x][y+1];//空白位置 存储移动的图片路径
-            x=x;
-            y=y+1;//更新空白位置的坐标
-            data[x][y]=0;//此步是必须的   新空白位置的值必须重置为零，不然会出现复制情况
+            data[x][y] = data[x][y + 1];//空白位置 存储移动的图片路径
+            x = x;
+            y = y + 1;//更新空白位置的坐标
+            data[x][y] = 0;//此步是必须的   新空白位置的值必须重置为零，不然会出现复制情况
             addimage();//重新加载
-        }
-        else if(code==38)//↑
-        {if (x==3){//空白快在最下面，其他方块没法向上
-            return;
-        }
-            data[x][y]=data[x+1][y];
-            x=x+1;
-            y=y;
-            data[x][y]=0;
-            addimage();
-        }
-        else if(code==39)//→
-        {if (y==0)
+        } else if (code == 38)//↑
         {
-            return;
-        }
-            data[x][y]=data[x][y-1];
-            x=x;
-            y=y-1;
-            data[x][y]=0;
-            addimage();
-        }
-        else if (code==40)//↓
-        {
-            if (x==0)
-            {
+            if (x == 3) {//空白快在最下面，其他方块没法向上
                 return;
             }
-            data[x][y]=data[x-1][y];
-            x=x-1;
-            y=y;
-            data[x][y]=0;
+            data[x][y] = data[x + 1][y];
+            x = x + 1;
+            y = y;
+            data[x][y] = 0;
+            addimage();
+        } else if (code == 39)//→
+        {
+            if (y == 0) {
+                return;
+            }
+            data[x][y] = data[x][y - 1];
+            x = x;
+            y = y - 1;
+            data[x][y] = 0;
+            addimage();
+        } else if (code == 40)//↓
+        {
+            if (x == 0) {
+                return;
+            }
+            data[x][y] = data[x - 1][y];
+            x = x - 1;
+            y = y;
+            data[x][y] = 0;
+            addimage();
+        } else if (code == 65) {//松开显示拼图
             addimage();
         }
+        if(judgewin()){
+            ImageIcon win = new ImageIcon("image/win.png");
+            JLabel j_win = new JLabel(win);
+            this.getContentPane().add(j_win);
+        }
 
+
+    }
+
+    public boolean judgewin() {
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[i].length; j++) {
+                if (data[i][j]!=win[i][j])
+                {
+                    return false;//一个不同就退出
+                }
+            }
+        }
+        return true;
     }
 }
