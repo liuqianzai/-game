@@ -140,6 +140,35 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
 
     @Override
     public void keyReleased(KeyEvent e) {
-    
+        int code = e.getKeyCode();
+        if (code==37)//←对应的数值  当code==37是表示输入的←  同时表示将空位  右方  的图片移动上来
+        {
+            int temp=data[x][y];
+            data[x][y]=data[x][y+1];
+            data[x][y+1]=temp;
+            addimage();
+        }
+        else if(code==38)//↑
+        {
+            int temp=data[x][y];
+            data[x][y]=data[x+1][y];
+            data[x+1][y]=temp;
+            addimage();
+        }
+        else if(code==39)//→
+        {
+            int temp=data[x][y];
+            data[x][y]=data[x][y-1];
+            data[x][y-1]=temp;
+            addimage();
+        }
+        else if (code==40)//↓
+        {
+            int temp=data[x][y];
+            data[x][y]=data[x-1][y];
+            data[x-1][y]=temp;
+            addimage();
+        }
+
     }
 }
