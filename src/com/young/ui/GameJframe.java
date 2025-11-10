@@ -100,6 +100,7 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
 
     //循环创建对象并添加
     private void addimage() {
+        this.getContentPane().removeAll();//加载前先清空，不然图片不会加载，移动拼图也不会生效
 
         //一共添加四行
         for (int i = 0; i < 4; i++) {
@@ -125,6 +126,8 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
         JLabel Jbackground = new JLabel(background);
         Jbackground.setBounds(40, 40, 508, 560);
         this.getContentPane().add(Jbackground);
+
+        this.getContentPane().repaint();//重绘方法，刷新界面
     }
 
 
@@ -143,30 +146,47 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
         int code = e.getKeyCode();
         if (code==37)//←对应的数值  当code==37是表示输入的←  同时表示将空位  右方  的图片移动上来
         {
-            int temp=data[x][y];
-            data[x][y]=data[x][y+1];
-            data[x][y+1]=temp;
-            addimage();
+            if (y==3)
+            {
+                return;//当空白块在最右边时，没法向左移动其他方块
+            }
+            data[x][y]=data[x][y+1];//空白位置 存储移动的图片路径
+            x=x;
+            y=y+1;//更新空白位置的坐标
+            data[x][y]=0;//此步是必须的   新空白位置的值必须重置为零，不然会出现复制情况
+            addimage();//重新加载
         }
         else if(code==38)//↑
-        {
-            int temp=data[x][y];
+        {if (x==3){//空白快在最下面，其他方块没法向上
+            return;
+        }
             data[x][y]=data[x+1][y];
-            data[x+1][y]=temp;
+            x=x+1;
+            y=y;
+            data[x][y]=0;
             addimage();
         }
         else if(code==39)//→
+        {if (y==0)
         {
-            int temp=data[x][y];
+            return;
+        }
             data[x][y]=data[x][y-1];
-            data[x][y-1]=temp;
+            x=x;
+            y=y-1;
+            data[x][y]=0;
             addimage();
         }
         else if (code==40)//↓
         {
-            int temp=data[x][y];
+            if (x==0)
+            {
+                return;
+            }
             data[x][y]=data[x-1][y];
-            data[x-1][y]=temp;
+            x=x-1;
+            y=y;
+            data[x][y]=0;
             addimage();
         }
 
