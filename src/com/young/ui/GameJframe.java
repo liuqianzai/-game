@@ -2,11 +2,13 @@ package com.young.ui;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
 
-public class GameJframe extends JFrame implements KeyListener {//继承java界面类，实现键盘监听接口
+public class GameJframe extends JFrame implements KeyListener, ActionListener {//继承java界面类，实现键盘监听接口
     int[][] data = new int[4][4];//记录各张图片的路径
     int x, y;//记录空白方块的位置坐标
     String path = "image/girl/girl3/";//记录当前图片的路径，方便后面随机图片
@@ -15,8 +17,25 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
             {4, 5, 6, 7,},
             {8, 9, 10, 11},
             {12, 13, 14, 15}};
+    int step=0;
+
+    //菜单组成
+    JMenuItem f_restart = new JMenuItem("重新游戏");
+    JMenuItem f_relogin = new JMenuItem("重新登陆");
+    JMenuItem f_close = new JMenuItem("关闭游戏");
+
+    JMenuItem weixin = new JMenuItem("微信号");
 
     //jframe表示窗口，游戏窗口很明显是他的子类所以继承jframe
+
+
+
+
+
+
+
+
+
     //实现各种与游戏窗口相关的逻辑
     public GameJframe() {
         initgameframe();
@@ -51,13 +70,18 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
         JMenu function = new JMenu("功能");
         JMenu aboutme = new JMenu("关于我");
 
-        //菜单组成
-        JMenuItem f_restart = new JMenuItem("重新游戏");
-        JMenuItem f_relogin = new JMenuItem("重新登陆");
-        JMenuItem f_close = new JMenuItem("关闭游戏");
+//        //菜单组成
+//        JMenuItem f_restart = new JMenuItem("重新游戏");
+//        JMenuItem f_relogin = new JMenuItem("重新登陆");
+//        JMenuItem f_close = new JMenuItem("关闭游戏");
+//
+//        JMenuItem weixin = new JMenuItem("微信号");
 
-        JMenuItem weixin = new JMenuItem("微信号");
-
+        //绑定事件
+        f_restart.addActionListener(this);
+        f_relogin.addActionListener(this);
+        f_close.addActionListener(this);
+        weixin.addActionListener(this);
 //        添加到菜单
         function.add(f_restart);
         function.add(f_relogin);
@@ -113,6 +137,10 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
         JLabel j_win = new JLabel(win);
         j_win.setBounds(203,283,197,73);
         this.getContentPane().add(j_win);}
+        //添加步数
+        JLabel j_step = new JLabel("步数:"+step);
+        j_step.setBounds(50,30,100,20);//像素要设置好不能太小不然显示不出来
+        this.getContentPane().add(j_step);
         //一共添加四行
         for (int i = 0; i < 4; i++) {
 //            添加一行图片
@@ -151,7 +179,9 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
         if (code == 65) //表示A键
-        {
+        {//这里也是个小bug，不加的话胜利后还可以查看原图
+            if (judgewin())
+            return;
 
             this.getContentPane().removeAll();
             ImageIcon imageIcon = new ImageIcon(path + "all.jpg");
@@ -165,7 +195,7 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
             this.getContentPane().add(Jbackground);
             this.getContentPane().repaint();
 
-        } else if (code == 87) {
+        } else if (code == 87) {//表示w键，作弊
 //            重置data中的值，然后重新加载
             data = new int[][]{
                     {0, 1, 2, 3},
@@ -196,6 +226,7 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
             x = x;
             y = y + 1;//更新空白位置的坐标
             data[x][y] = 0;//此步是必须的   新空白位置的值必须重置为零，不然会出现复制情况
+            step++;
             addimage();//重新加载
         } else if (code == 38)//↑
         {
@@ -206,6 +237,7 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
             x = x + 1;
             y = y;
             data[x][y] = 0;
+            step++;
             addimage();
         } else if (code == 39)//→
         {
@@ -216,6 +248,7 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
             x = x;
             y = y - 1;
             data[x][y] = 0;
+            step++;
             addimage();
         } else if (code == 40)//↓
         {
@@ -226,19 +259,15 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
             x = x - 1;
             y = y;
             data[x][y] = 0;
+            step++;
             addimage();
-        } else if (code == 65) {//松开显示拼图
+        } else if (code == 65) {//松开A显示拼图
             addimage();
         }
-        if(judgewin()){
-            ImageIcon win = new ImageIcon("image/win.png");
-            JLabel j_win = new JLabel(win);
-            this.getContentPane().add(j_win);
         }
 
 
-    }
-
+//判断胜利
     public boolean judgewin() {
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[i].length; j++) {
@@ -249,5 +278,52 @@ public class GameJframe extends JFrame implements KeyListener {//继承java界�
             }
         }
         return true;
+    }
+//actionlistener
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        //读取e的源头识别动作
+        Object source= e.getSource();
+        if (source==f_restart)//点击重新开始
+        {
+            //清空步数，必须先清空step再渲染
+            step=0;
+            //打乱图片（data）
+            initdata();
+            //重新加载
+            addimage();
+        }
+        if (source==f_relogin)
+        {//关闭当前界面
+            System.out.println("重新登陆");
+            this.setVisible(false);
+            //新建loginframe
+            new LoginJframe();
+
+        }
+        if (source==f_close)
+        {//直接关闭虚拟机
+            System.exit(0);
+
+        }
+        if (source==weixin)
+        {
+            //新建弹出式窗口,级别和frame一致，内部有隐藏容器
+            JDialog jDialog = new JDialog();
+            JLabel jLabel = new JLabel(new ImageIcon("image/aboutme.png"));
+            jLabel.setBounds(0,0,210,210);
+//注释，不取消居中            jDialog.getContentPane().setLayout(null);
+            jDialog.getContentPane().add(jLabel);
+            jDialog.setSize(300,300);
+            //屏幕正中央
+            jDialog.setAlwaysOnTop(true);
+            jDialog.setLocationRelativeTo(null);
+            //弹框不关闭无法操作下面的界面
+            jDialog.setModal(true);
+            jDialog.setVisible(true);
+
+
+        }
+
     }
 }
