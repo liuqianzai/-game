@@ -26,6 +26,9 @@ public class GameJframe extends JFrame implements KeyListener, ActionListener {/
 
     JMenuItem weixin = new JMenuItem("微信号");
 
+    JMenuItem c_women = new JMenuItem("美女");
+    JMenuItem c_animal = new JMenuItem("动物");
+    JMenuItem c_sport= new JMenuItem("运动");
     //jframe表示窗口，游戏窗口很明显是他的子类所以继承jframe
 
 
@@ -36,7 +39,7 @@ public class GameJframe extends JFrame implements KeyListener, ActionListener {/
 
 
 
-    //实现各种与游戏窗口相关的逻辑
+   //构造函数也是用来加载渲染窗口的 //实现各种与游戏窗口相关的逻辑
     public GameJframe() {
         initgameframe();
         initmenu();
@@ -57,7 +60,7 @@ public class GameJframe extends JFrame implements KeyListener, ActionListener {/
         this.setLocationRelativeTo(null);
         //点击关闭键时退出程序，还有别的参数比如点击关闭什么也不干、关闭走后一个窗口时退出程序
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //取消默认的居中设置，才会按照xy来拜访组件
+        //取消默认的居中设置，才会按照xy来摆放后续组件
         this.setLayout(null);
         //将键盘监听添加到啊gameframe，同时传入苯类（接口实现类）的对象，  给出重写后方法的位置方便调用重写后的方法
         this.addKeyListener(this);
@@ -69,6 +72,8 @@ public class GameJframe extends JFrame implements KeyListener, ActionListener {/
 //新建菜单*2
         JMenu function = new JMenu("功能");
         JMenu aboutme = new JMenu("关于我");
+        //这是二级菜单需要放在功能中，其中包含了三类图片选项
+        JMenu f_changeimg = new JMenu("更换图片");//这是二级菜单需要放在功能中
 
 //        //菜单组成
 //        JMenuItem f_restart = new JMenuItem("重新游戏");
@@ -82,10 +87,21 @@ public class GameJframe extends JFrame implements KeyListener, ActionListener {/
         f_relogin.addActionListener(this);
         f_close.addActionListener(this);
         weixin.addActionListener(this);
-//        添加到菜单
+
+        c_women.addActionListener(this);
+        c_animal.addActionListener(this);
+        c_sport.addActionListener(this);
+
+        //二级菜单添加功能
+        f_changeimg.add(c_women);
+        f_changeimg.add(c_animal);
+        f_changeimg.add(c_sport);
+
+//      菜单功能添加到菜单
         function.add(f_restart);
         function.add(f_relogin);
         function.add(f_close);
+        function.add(f_changeimg);
 
         aboutme.add(weixin);
 
@@ -322,7 +338,33 @@ public class GameJframe extends JFrame implements KeyListener, ActionListener {/
             jDialog.setModal(true);
             jDialog.setVisible(true);
 
-
+        }
+        if(source==c_women)
+        {
+            Random random = new Random();
+            int index=random.nextInt(13)+1;//1-13
+            path="image/girl/girl"+index+"/";//image/girl/girl?/这就是目标效果
+            step=0;
+            initdata();
+            addimage();
+        }
+        if(source==c_animal)
+        {
+            Random random = new Random();
+            int index=random.nextInt(8)+1;
+            path="image/animal/animal"+index+"/";
+            step=0;
+            initdata();
+            addimage();
+        }
+        if(source==c_sport)
+        {
+            Random random = new Random();
+            int index=random.nextInt(10)+1;
+            path="image/sport/sport"+index+"/";
+            step=0;
+            initdata();
+            addimage();
         }
 
     }
