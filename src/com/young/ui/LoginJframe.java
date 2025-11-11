@@ -3,9 +3,11 @@ package com.young.ui;
 import Utils.CodeUtil;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class LoginJframe extends JFrame {
+public class LoginJframe extends JFrame implements ActionListener {
 
     //利用静态变量存储一个用户表
     static ArrayList<User> list = new ArrayList<>();
@@ -13,7 +15,10 @@ public class LoginJframe extends JFrame {
         list.add(new User("zhangsan","123"));
         list.add(new User("lisi","1234"));
     }
-    //登录界面
+    JButton login = new JButton("登录");
+
+
+    //界面启动
     public LoginJframe()
     {
         initloginframe();
@@ -81,7 +86,7 @@ public class LoginJframe extends JFrame {
         this.getContentPane().add(rightCode);
 
         //5.添加登录按钮
-        JButton login = new JButton();
+
         login.setBounds(123, 310, 128, 47);
         login.setIcon(new ImageIcon("image/login/登录按钮.png"));
         //去除按钮的默认边框
@@ -105,12 +110,26 @@ public class LoginJframe extends JFrame {
         background.setBounds(0, 0, 470, 390);
         this.getContentPane().add(background);
     }
-    private void addbutton()
+    private void listenbutton()
     {
+//如果登录
+
+// 如果注册
 
     }
-    }
+    private void loginjudge(){}//登录判断
+    private void message(String context){}//弹框提醒
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
+}
+
+//待完成的功能
+//1、实现登录功能，获取输入框中的用户名】密码】验证码】当用户名密码为空时弹出窗口提醒，当验证码错误时弹出窗口提醒，成功也弹出窗口提醒，同时切换到游戏界面
+//2、按钮绑定点击监听，登录绑定actionlistener，点击时调用登录判断；同时应该实现点击时切换到另一张图片实现点击变色功能
+//3、注册功能学习数据库、持久化之后再说吧
 
 
 
